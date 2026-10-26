@@ -1,0 +1,28 @@
+{
+  "model": "textcnn",
+  "candidate": "standard",
+  "settings": {
+    "name": "standard",
+    "dropout": 0.3,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001
+  },
+  "trained_epochs": 4,
+  "best_epoch": 2,
+  "best_val_loss": 0.29687920212745667,
+  "best_val_accuracy": 0.875,
+  "best_train_accuracy": 0.9305624961853027,
+  "seconds": 64.83,
+  "parameter_count": 2072449,
+  "test_used_for_selection": false,
+  "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+  "versions": {
+    "tensorflow": "2.21.0",
+    "keras": "3.15.1",
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1"
+  },
+  "devices": [
+    "PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU')"
+  ]
+}

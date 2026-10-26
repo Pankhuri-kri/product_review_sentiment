@@ -1,0 +1,153 @@
+{
+  "prepare-data": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 20.22,
+    "peak_private_mib": 686.5,
+    "peak_rss_mib": 629.0,
+    "files": {
+      "train.csv": "e76aea1ea882c2fa8198bc4ef2eeb54d31bb6cb418bb1d85555f107f92df2904",
+      "validation.csv": "6aa2f543a15d6835982d4dff2e9945801962e15cee87361386423f0122577559",
+      "test.csv": "78753ddcb8bfeaa39cd61bafb721dec8b12021f07d50f3a78c87f707a006661c",
+      "subset.csv": "51e81b7e3b2947a56ae1af68d2e80e45aeb8db6d283f599aa78c7f6af63134d3",
+      "data_audit.json": "2b941a501805b1021ea2e3856ad30c7d66b5ebb8c918896536f3efae32e97502",
+      "vectorizer.pkl": "625823558be6de0a4ae001952540b391440530b16e4b6af11a5dad77d5aac3ec",
+      "train_tfidf.npz": "74335c9e9cb5eb1b0f8a3f4efb1e90e97b4ad332f67e3a97452b30fdca4e79ea",
+      "validation_tfidf.npz": "d3b87125f692a076b358cdd61288ed814521413ee8fc7abb5c151eda7676c311",
+      "test_tfidf.npz": "d8c142ff8c5c826bfa74563006228dfda573b8cfe1b9fcd2ca89d4cae7b533b3"
+    }
+  },
+  "prepare-sequences": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 17.2,
+    "peak_private_mib": 416.3,
+    "peak_rss_mib": 374.2,
+    "files": {
+      "tokenizer.json": "97c4e7a8c154e7bf132cefbbaba6f1eae58a076491c1338df0e7fb2cd09cfe10",
+      "sequence_metadata.json": "ff482c016bfc778bf2ad045e54a4d86466a04b2b778412876219c5dfd3b9e8a8",
+      "train_sequences.npy": "e7af615bbd941c4afb29a778f3b5f909eb2e01cd7cde593926b55edc384f00ba",
+      "validation_sequences.npy": "1200538ca60f158d4fbcc2a802902dc9687dcdd17c39b23b6921ff25c986b302",
+      "test_sequences.npy": "11b1733029a4108c6b077e5aa875adff5b26e469741b8ac0b1e4900417a0dbc5"
+    }
+  },
+  "train-mlp-standard": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 97.78,
+    "peak_private_mib": 644.4,
+    "peak_rss_mib": 575.2,
+    "files": {
+      "models\\mlp\\standard\\model.keras": "e5445806b099bb78d1eb4e21c4aa8943c0f9a63655a2522a788014273e0baf06",
+      "models\\mlp\\standard\\history.csv": "817837efcfc7113ee3b5748b8ada25d7caace1ea664775cf67b9cc70e1d9498b",
+      "models\\mlp\\standard\\training_summary.json": "939873257b85cff1cf310ff1e5de11805e54ff1e0502495782359f34e629c226"
+    }
+  },
+  "train-mlp-regularized": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 90.56,
+    "peak_private_mib": 585.4,
+    "peak_rss_mib": 522.7,
+    "files": {
+      "models\\mlp\\regularized\\model.keras": "e85de87ebbb09f712f08d06663867fde158a98aa585b4d2d232640fae61e0ddf",
+      "models\\mlp\\regularized\\history.csv": "a47202e30421ece6cab41c459c06c0d714d60c6d216b25cc41c04e6ac5fd722e",
+      "models\\mlp\\regularized\\training_summary.json": "6f6795031778878a1f1e2581b88a6bab941599fbe7a29f1e4eee3e3eafddce31"
+    }
+  },
+  "train-textcnn-standard": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 75.94,
+    "peak_private_mib": 503.5,
+    "peak_rss_mib": 459.9,
+    "files": {
+      "models\\textcnn\\standard\\model.keras": "3a9172a99be9e37735a47b1ba40f753cda2b0b8dc145c3c5ae0b3e37b6dbf7aa",
+      "models\\textcnn\\standard\\history.csv": "fdeda547864a51f6409fbe2fbfaa12dc7f029ce6fca5ede1ac2a3b0e486c00f1",
+      "models\\textcnn\\standard\\training_summary.json": "d1becd4366325e8fc25b533277198f5239e57ebbcce8ed6d14765b51c57db935"
+    }
+  },
+  "train-textcnn-regularized": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 72.89,
+    "peak_private_mib": 512.1,
+    "peak_rss_mib": 464.9,
+    "files": {
+      "models\\textcnn\\regularized\\model.keras": "d31b2eff3e9a4cc5c95a77efbbbb4924606068c2f76c6f470feda573b4038132",
+      "models\\textcnn\\regularized\\history.csv": "a240553a118ec640762f3507ca53c071fb23ccb52f3f15784cf5a3b634dc0e1e",
+      "models\\textcnn\\regularized\\training_summary.json": "91a146606d0aadd03159f22ca9a054e6a6a132804208a7e31249885bf4da6f92"
+    }
+  },
+  "train-bilstm-standard": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 199.02,
+    "peak_private_mib": 581.8,
+    "peak_rss_mib": 540.5,
+    "files": {
+      "models\\bilstm\\standard\\model.keras": "f6989e16d2638d0d0be3cf2f96626e8750ab1a85b8d6e5b8e652e2147d145c44",
+      "models\\bilstm\\standard\\history.csv": "3c8765d5fe407a10f9714dec9577c6477c07bbb0a2bf021fcc8747fbc3bbbd77",
+      "models\\bilstm\\standard\\training_summary.json": "76b9c0e5b01377452444b28393bd3a450ec0c831492e1c32114c4fb204c6a1d1"
+    }
+  },
+  "train-bilstm-regularized": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 167.44,
+    "peak_private_mib": 580.6,
+    "peak_rss_mib": 538.5,
+    "files": {
+      "models\\bilstm\\regularized\\model.keras": "ff3f98b41cfa4f49cd8ed76fa8d3f6a3921784c62acfbf708995e9ec3c91c702",
+      "models\\bilstm\\regularized\\history.csv": "545b6da1fbeee7dd28ca7a3dc5012d74045050473293445b4c6445d517be2b83",
+      "models\\bilstm\\regularized\\training_summary.json": "653f1facfcfe852ecf3e06686038f66051e9195e9a996297920e74b9c8291a9e"
+    }
+  },
+  "evaluate-mlp": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 9.09,
+    "peak_private_mib": 550.9,
+    "peak_rss_mib": 444.3,
+    "files": {
+      "evaluation\\mlp\\metrics.json": "6dfd2587c3cacc6461843617d2a5bbd6c7613ff87e1760faae15792edcb2e515",
+      "evaluation\\mlp\\predictions.csv": "a3581c5bcc0511689b4742ff31daf2c0b5924afadf387d6eb02d04a15717752d",
+      "evaluation\\mlp\\misclassified.csv": "6c11fedebff5f86a57c46e8e99581766dbccc420b4d1dfe4b1536e6c003a4a20",
+      "evaluation\\mlp\\error_categories.csv": "018eba8d4fe99e74e959067692efa7f80c3bd870f947b8283b45ef1ac01bab16",
+      "evaluation\\mlp\\failure_examples.csv": "e2912c478ac1bea0701a6cc6e1a2c354c6becfd8985032a8433b21a382e8c9fc",
+      "evaluation\\mlp\\classification_report.json": "da9f20798a61f0936b6f8e79d58e19a0b62dddf01522d1138f8cf8ee19254ec5",
+      "evaluation\\mlp\\confusion_matrix.csv": "14960e7b173d656345b8a8291bb9f4a00e859103ddbdb5450ea7b842072cde41"
+    }
+  },
+  "evaluate-textcnn": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 8.08,
+    "peak_private_mib": 470.6,
+    "peak_rss_mib": 401.5,
+    "files": {
+      "evaluation\\textcnn\\metrics.json": "faa8d74d69812cfa1b5a56ab0d878d2c58195efcb6f452be641cee4f8312f111",
+      "evaluation\\textcnn\\predictions.csv": "1e2d0701a13e0596542d95f3ec9d2f994f8ccbb5a8a4804754b5e3254c2a4e8a",
+      "evaluation\\textcnn\\misclassified.csv": "41650dbc28d5436664721f30fd762e2fd00c5bda705f9ee51b40b1f01150dea8",
+      "evaluation\\textcnn\\error_categories.csv": "7f249144d73357c419ebe10bcdee2b1a155123079d4be83629bfb249a4b7252c",
+      "evaluation\\textcnn\\failure_examples.csv": "38f42dfa271ff5344b24bf9a36bc63d2c5708dc970afbb6e1cf1daa6fddb8f9d",
+      "evaluation\\textcnn\\classification_report.json": "9d878a6a940c34e523c066f8dcb38669b608425bcc444cc2fa767e5135c8c1a5",
+      "evaluation\\textcnn\\confusion_matrix.csv": "1908eaa58af90723e0008d755eaa23cbb7238fbccfa248eada91e2998c59df83"
+    }
+  },
+  "evaluate-bilstm": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 56.51,
+    "peak_private_mib": 442.7,
+    "peak_rss_mib": 397.6,
+    "files": {
+      "evaluation\\bilstm\\metrics.json": "cf4b849b9583707bf219e3e2ed87ab3aa1f3450f327fd1f89212f8bbe0f735ef",
+      "evaluation\\bilstm\\predictions.csv": "11bb70e37593e8907b777a0d0de7989ce0d0bc04ade6d15dec9e6467fc42d66b",
+      "evaluation\\bilstm\\misclassified.csv": "62e71a30ea60541f32226fe8c9c3fadbcf2da28f8c6cd504d253ef7b534c6f6c",
+      "evaluation\\bilstm\\error_categories.csv": "7e3610e16f82e761ae9ee1a1d6bbddf950c1e02f2f8b38d0e822003c1789c499",
+      "evaluation\\bilstm\\failure_examples.csv": "a6e52beec80d086ee6b7662c7d22880f60145cb6aa6a994852883039d1c6befd",
+      "evaluation\\bilstm\\classification_report.json": "ac5ebdc39dddd2be3332ec67e183213321677aadb34aa67e260e7a1c014f9d53",
+      "evaluation\\bilstm\\confusion_matrix.csv": "aee18d3d8275d9c34d86af44bc224a6caa0a4877019e66874b9327129f39f5fc"
+    }
+  },
+  "report": {
+    "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+    "seconds": 4.05,
+    "peak_private_mib": 186.1,
+    "peak_rss_mib": 163.8,
+    "files": {
+      "comparison.csv": "444b1bf0c5b808bda47de18ea11ff04e1b0c7b1da410cd778a2c9bf24a868ecd",
+      "RESULTS.md": "179f9803b50577fd371988fd6e6ff5c836aff7d14549e3996d04e6ed89a01bf5"
+    }
+  }
+}

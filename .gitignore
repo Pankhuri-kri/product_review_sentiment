@@ -1,0 +1,51 @@
+# Python bytecode and tooling caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local environments, downloaded data, and credentials
+.venv/
+venv/
+.verification-env/
+.verification-cache/
+.cache/
+.env
+.env.*
+!.env.example
+!.env.sample
+/data/
+/datasets/
+
+# Notebook checkpoints, logs, and operating-system files
+.ipynb_checkpoints/
+*.log
+.DS_Store
+Thumbs.db
+~$*
+
+# Generated checkpoints and fitted preprocessing objects
+results/**/models/**/*.keras
+results/**/models/**/*.h5
+results/**/models/**/*.hdf5
+results/**/vectorizer.pkl
+results/**/tokenizer.json
+
+# Rebuildable feature arrays and full review datasets
+results/**/*.npz
+results/**/*.npy
+results/**/subset.csv
+results/**/train.csv
+results/**/validation.csv
+results/**/test.csv
+results/**/evaluation/**/predictions.csv
+
+# Local stage-completion caches; checkpoints are not distributed through Git
+results/**/.*.complete.json
+
+# Keep comparison tables, training histories, metrics, confusion matrices,
+# failure examples, reviewed cases, provenance, reports, and the executed notebook.

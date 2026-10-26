@@ -1,0 +1,93 @@
+{
+  "population_rows": 3600000,
+  "requested_samples": 20000,
+  "sampled_candidates": 22000,
+  "candidate_duplicates_removed": 0,
+  "conflicting_cleaned_texts_excluded": 0,
+  "unique_reviews": 20000,
+  "label_counts": {
+    "0": 10000,
+    "1": 10000
+  },
+  "sampling": "Uniform without replacement per label; deterministic reserves replace empty, duplicate, or conflicting cleaned reviews",
+  "source_row_ids_sha256": "069dc83b9599c77b737876c4613c690f522f427f00bd20d29a3f1b266401c81f",
+  "splits": {
+    "train": {
+      "rows": 16000,
+      "label_counts": {
+        "1": 8000,
+        "0": 8000
+      }
+    },
+    "validation": {
+      "rows": 2000,
+      "label_counts": {
+        "1": 1000,
+        "0": 1000
+      }
+    },
+    "test": {
+      "rows": 2000,
+      "label_counts": {
+        "0": 1000,
+        "1": 1000
+      }
+    }
+  },
+  "dataset": "fancyzhx/amazon_polarity",
+  "revision": "9d9c45c18f8c3cf1b23a3c27917b60cbf28f3289",
+  "seed": 42,
+  "source_files": [
+    {
+      "name": "train-00000-of-00004.parquet",
+      "bytes": 259761770
+    },
+    {
+      "name": "train-00001-of-00004.parquet",
+      "bytes": 258363554
+    },
+    {
+      "name": "train-00002-of-00004.parquet",
+      "bytes": 255471883
+    },
+    {
+      "name": "train-00003-of-00004.parquet",
+      "bytes": 254410930
+    }
+  ],
+  "source": "https://huggingface.co/datasets/fancyzhx/amazon_polarity/tree/9d9c45c18f8c3cf1b23a3c27917b60cbf28f3289",
+  "text_batch_size": 1024,
+  "source_partition": "train only; official test partition not used",
+  "tfidf": {
+    "train": {
+      "shape": [
+        16000,
+        20000
+      ],
+      "dtype": "float32",
+      "nnz": 1321335,
+      "csr_bytes": 10634684,
+      "hypothetical_dense_float64_bytes": 2560000000
+    },
+    "validation": {
+      "shape": [
+        2000,
+        20000
+      ],
+      "dtype": "float32",
+      "nnz": 161802,
+      "csr_bytes": 1302420,
+      "hypothetical_dense_float64_bytes": 320000000
+    },
+    "test": {
+      "shape": [
+        2000,
+        20000
+      ],
+      "dtype": "float32",
+      "nnz": 162134,
+      "csr_bytes": 1305076,
+      "hypothetical_dense_float64_bytes": 320000000
+    }
+  }
+}

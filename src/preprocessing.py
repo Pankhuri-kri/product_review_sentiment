@@ -4,8 +4,6 @@ Owner: Jambhorkar Arya Sachin (230911088)
 """
 
 import re
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 MAX_VOCAB = 20000
 MAX_LEN = 100
@@ -24,12 +22,14 @@ def clean_text(text: str) -> str:
 def build_tokenizer(train_texts, max_vocab=MAX_VOCAB):
     """Fit a Keras Tokenizer on the training text only (never on val/test,
     to avoid leaking vocabulary information across the split)."""
+    from tensorflow.keras.preprocessing.text import Tokenizer
     tok = Tokenizer(num_words=max_vocab, oov_token="<OOV>")
     tok.fit_on_texts(train_texts)
     return tok
 
 
 def texts_to_padded_sequences(tokenizer, texts, max_len=MAX_LEN):
+    from tensorflow.keras.preprocessing.sequence import pad_sequences
     seqs = tokenizer.texts_to_sequences(texts)
     return pad_sequences(seqs, maxlen=max_len, padding="post", truncating="post")
 

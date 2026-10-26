@@ -1,0 +1,40 @@
+{
+  "dataset": "fancyzhx/amazon_polarity",
+  "revision": "9d9c45c18f8c3cf1b23a3c27917b60cbf28f3289",
+  "samples": 20000,
+  "seed": 42,
+  "epochs": 8,
+  "patience": 2,
+  "batch_size": 32,
+  "max_vocab": 20000,
+  "max_length": 100,
+  "embedding_dim": 100,
+  "candidates": [
+    {
+      "name": "standard",
+      "dropout": 0.3,
+      "learning_rate": 0.001,
+      "weight_decay": 0.0001
+    },
+    {
+      "name": "regularized",
+      "dropout": 0.5,
+      "learning_rate": 0.0005,
+      "weight_decay": 0.0001
+    }
+  ],
+  "shard_dir": null,
+  "source_hashes": {
+    "bilstm_model.py": "7cc474e84b99bfd4d045c94101d2d8037bbb2ef7040f79eb8df9d31237f1f698",
+    "data_utils.py": "c4ecf644e1098dc69c77ad32418e02745c9d406a842190ad65d1f795d1b4643d",
+    "evaluate.py": "742d14739bd7e1dfbb8ca56f758d9363bb93e6e06f480246a001457ef83a00a1",
+    "mlp_model.py": "2a07d183da67af3a87da88145ee98728ad4d8a60af475c0e37b5dcadc42ce1af",
+    "pipeline.py": "f7c7c410365845338968c894890c010acda8a3fbb94a6304139d6d9f7de4ef4e",
+    "preprocessing.py": "14b5100fea9eda743555d6b05e3e3fdb836dc885e2226674d2a192b8adb45b6d",
+    "split_utils.py": "f04678c6087f75926456080a664d54fa77c2e8a58c7f054e63530309c0f1e201",
+    "textcnn_model.py": "84362a50b7ab1ce8502c9fc1af1af53ef89a2b250aacbad44a80023e06aef733",
+    "train_worker.py": "24aed0dece44dee7856f32d54e925f2330a0719741441a8f32b2d619b3ca47d1",
+    "training_utils.py": "5ca31a740b975a0364f15accfcff4fd1ed946b8745cb60222d9de2691230ac4d"
+  },
+  "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d"
+}

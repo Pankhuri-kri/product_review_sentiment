@@ -1,0 +1,28 @@
+{
+  "model": "bilstm",
+  "candidate": "standard",
+  "settings": {
+    "name": "standard",
+    "dropout": 0.3,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001
+  },
+  "trained_epochs": 3,
+  "best_epoch": 1,
+  "best_val_loss": 0.2801750600337982,
+  "best_val_accuracy": 0.8809999823570251,
+  "best_train_accuracy": 0.8385000228881836,
+  "seconds": 190.31,
+  "parameter_count": 2092801,
+  "test_used_for_selection": false,
+  "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+  "versions": {
+    "tensorflow": "2.21.0",
+    "keras": "3.15.1",
+    "numpy": "2.5.4",
+    "scikit-learn": "1.9.1"
+  },
+  "devices": [
+    "PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU')"
+  ]
+}

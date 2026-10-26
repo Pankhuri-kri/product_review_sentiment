@@ -1,0 +1,8 @@
+{
+  "run_signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+  "predictions_sha256": {
+    "mlp": "a3581c5bcc0511689b4742ff31daf2c0b5924afadf387d6eb02d04a15717752d",
+    "textcnn": "1e2d0701a13e0596542d95f3ec9d2f994f8ccbb5a8a4804754b5e3254c2a4e8a",
+    "bilstm": "11bb70e37593e8907b777a0d0de7989ce0d0bc04ade6d15dec9e6467fc42d66b"
+  }
+}

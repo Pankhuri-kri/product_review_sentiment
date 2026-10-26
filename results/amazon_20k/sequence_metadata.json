@@ -1,0 +1,34 @@
+{
+  "vocab_size": 20000,
+  "max_length": 100,
+  "embedding_dim": 100,
+  "splits": {
+    "train": {
+      "shape": [
+        16000,
+        100
+      ],
+      "dtype": "int32",
+      "bytes": 6400000,
+      "truncated_reviews": 4738
+    },
+    "validation": {
+      "shape": [
+        2000,
+        100
+      ],
+      "dtype": "int32",
+      "bytes": 800000,
+      "truncated_reviews": 571
+    },
+    "test": {
+      "shape": [
+        2000,
+        100
+      ],
+      "dtype": "int32",
+      "bytes": 800000,
+      "truncated_reviews": 593
+    }
+  }
+}

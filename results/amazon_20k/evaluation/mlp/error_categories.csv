@@ -1,0 +1,4 @@
+category,reviews,errors,error_rate,annotation
+negation_cue,1352,168,0.1242603550295858,"heuristic cue, not a manually verified sentiment phenomenon"
+mixed_sentiment_cue,220,20,0.09090909090909091,"heuristic cue, not a manually verified sentiment phenomenon"
+sarcasm_cue,18,4,0.2222222222222222,"heuristic cue, not a manually verified sentiment phenomenon"

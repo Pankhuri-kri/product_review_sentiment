@@ -1,254 +1,163 @@
+"""Real Amazon Polarity experiment with isolated, memory-bounded stages.
+
+Run from the project directory: python src/pipeline.py --resume
 """
-ICT-4442 Deep Learning Mini Project — Phase 2 (Interim)
-Product Review Sentiment Classification: MLP vs TextCNN vs BiLSTM
-Team: Pankhuri Kumari (230911084), Jambhorkar Arya Sachin (230911088), Sai Prasad Prusty (230911298)
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
 
-This script is written to run in Google Colab against the REAL Amazon Polarity
-dataset (via HuggingFace `datasets`). Set USE_REAL_DATA = True in Colab.
-
-It was validated end-to-end in a sandboxed dev environment with no internet
-access to huggingface.co, so USE_REAL_DATA = False here generates a small
-synthetic stand-in dataset (templated positive/negative product-review
-sentences) purely to prove the pipeline runs without bugs. The numbers
-produced with USE_REAL_DATA=False are NOT meant for the report — they are a
-smoke test. Re-run this notebook in Colab with USE_REAL_DATA=True to get the
-real preliminary numbers for submission.
-"""
-
-import re
-import random
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
-
-import tensorflow as tf
-from tensorflow.keras import layers, models
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-
-SEED = 42
-random.seed(SEED)
-np.random.seed(SEED)
-tf.random.set_seed(SEED)
-
-USE_REAL_DATA = False   # <-- set True in Colab
-N_SAMPLES = 20000        # balanced subset size (10k pos + 10k neg), per synopsis
-MAX_VOCAB = 20000
-MAX_LEN = 100
-EMBED_DIM = 100
-
-# ---------------------------------------------------------------------------
-# 1. Dataset acquisition
-# ---------------------------------------------------------------------------
-
-def load_real_amazon_polarity(n_samples=N_SAMPLES, seed=SEED):
-    """Loads the Amazon Polarity dataset from HuggingFace and returns a
-    balanced subset as a pandas DataFrame with columns ['text', 'label'].
-    label: 1 = positive, 0 = negative. Run this in Colab (needs internet).
-    """
-    from datasets import load_dataset
-    # The old bare "amazon_polarity" repo id was retired on the HF Hub;
-    # it now lives under the fancyzhx namespace.
-    ds = load_dataset("fancyzhx/amazon_polarity", split="train")
-    df = ds.to_pandas()
-    df["text"] = df["title"].fillna("") + ". " + df["content"].fillna("")
-    pos = df[df.label == 1].sample(n=n_samples // 2, random_state=seed)
-    neg = df[df.label == 0].sample(n=n_samples // 2, random_state=seed)
-    out = pd.concat([pos, neg]).sample(frac=1, random_state=seed).reset_index(drop=True)
-    return out[["text", "label"]]
+PROJECT = Path(__file__).resolve().parents[1]
+REVISION = "9d9c45c18f8c3cf1b23a3c27917b60cbf28f3289"
+MODELS = ("mlp", "textcnn", "bilstm")
+CANDIDATES = (
+    {"name": "standard", "dropout": 0.3, "learning_rate": 0.001, "weight_decay": 0.0001},
+    {"name": "regularized", "dropout": 0.5, "learning_rate": 0.0005, "weight_decay": 0.0001},
+)
 
 
-def load_synthetic_dev_data(n_samples=600, seed=SEED):
-    """Small templated dataset used ONLY to smoke-test the pipeline offline.
-    Not representative of Amazon Polarity — do not report these numbers.
-    """
-    rng = random.Random(seed)
-    pos_templates = [
-        "This {item} is absolutely fantastic, I love it and would buy again.",
-        "Great {item}, works perfectly and the quality is excellent.",
-        "I am very happy with this {item}, highly recommend to everyone.",
-        "Amazing {item}! Exceeded my expectations, five stars.",
-        "The {item} arrived on time and works flawlessly, superb value.",
-        "Best {item} I have ever purchased, fast shipping and great build.",
-    ]
-    neg_templates = [
-        "This {item} is terrible, it broke after one use, do not buy.",
-        "Very disappointed with this {item}, poor quality and overpriced.",
-        "The {item} stopped working within a week, waste of money.",
-        "Awful {item}, not as described and customer service was rude.",
-        "I regret buying this {item}, it is cheaply made and useless.",
-        "Worst {item} ever, arrived damaged and packaging was bad.",
-    ]
-    items = ["phone case", "blender", "headphones", "backpack", "laptop stand",
-             "coffee maker", "keyboard", "shoes", "watch", "charger",
-             "monitor", "speaker", "vacuum", "camera", "toaster"]
-    rows = []
-    for _ in range(n_samples // 2):
-        t = rng.choice(pos_templates).format(item=rng.choice(items))
-        rows.append((t, 1))
-        t = rng.choice(neg_templates).format(item=rng.choice(items))
-        rows.append((t, 0))
-    rng.shuffle(rows)
-    return pd.DataFrame(rows, columns=["text", "label"])
+def sha256(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
-# ---------------------------------------------------------------------------
-# 2. Preprocessing pipeline
-# ---------------------------------------------------------------------------
-
-def clean_text(text: str) -> str:
-    text = text.lower()
-    text = re.sub(r"<[^>]+>", " ", text)          # strip HTML tags
-    text = re.sub(r"http\S+|www\.\S+", " ", text)  # strip URLs
-    text = re.sub(r"[^a-z0-9!?',.\s]", " ", text)  # keep basic punctuation (negation cues)
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
-
-
-def build_splits(df, seed=SEED):
-    """80/10/10 train/val/test split, stratified on label."""
-    train_df, temp_df = train_test_split(
-        df, test_size=0.2, stratify=df.label, random_state=seed)
-    val_df, test_df = train_test_split(
-        temp_df, test_size=0.5, stratify=temp_df.label, random_state=seed)
-    return train_df.reset_index(drop=True), val_df.reset_index(drop=True), test_df.reset_index(drop=True)
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output-dir", type=Path, default=PROJECT / "results/amazon_20k")
+    parser.add_argument("--samples", type=int, default=20000)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--epochs", type=int, default=8)
+    parser.add_argument("--patience", type=int, default=2)
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--revision", default=REVISION)
+    parser.add_argument("--shard-dir", type=Path, help="Optional local Amazon training parquet directory")
+    parser.add_argument("--resume", action="store_true", help="Reuse only stages with matching signatures and output hashes")
+    args = parser.parse_args(argv)
+    if args.samples < 100 or args.samples % 2:
+        parser.error("--samples must be an even integer >= 100")
+    if min(args.epochs, args.batch_size) < 1 or args.patience < 0:
+        parser.error("epochs and batch size must be positive; patience must be nonnegative")
+    return args
 
 
-# ---------------------------------------------------------------------------
-# 3. Model 1 — MLP on TF-IDF features  (owner: Pankhuri Kumari)
-# ---------------------------------------------------------------------------
-
-def build_mlp(input_dim):
-    model = models.Sequential([
-        layers.Input(shape=(input_dim,)),
-        layers.Dense(256, activation="relu"),
-        layers.Dropout(0.3),
-        layers.Dense(64, activation="relu"),
-        layers.Dropout(0.3),
-        layers.Dense(1, activation="sigmoid"),
-    ])
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-    return model
-
-
-def run_mlp(train_df, val_df, test_df, epochs=5):
-    vectorizer = TfidfVectorizer(max_features=MAX_VOCAB, ngram_range=(1, 2))
-    X_train = vectorizer.fit_transform(train_df.text).toarray()
-    X_val = vectorizer.transform(val_df.text).toarray()
-    X_test = vectorizer.transform(test_df.text).toarray()
-
-    model = build_mlp(X_train.shape[1])
-    model.fit(X_train, train_df.label.values,
-              validation_data=(X_val, val_df.label.values),
-              epochs=epochs, batch_size=32, verbose=0)
-
-    preds = (model.predict(X_test, verbose=0) > 0.5).astype(int).ravel()
-    return evaluate("MLP (TF-IDF)", test_df.label.values, preds)
-
-
-# ---------------------------------------------------------------------------
-# 4. Model 2 — TextCNN on word embeddings  (owner: Sai Prasad Prusty)
-# ---------------------------------------------------------------------------
-
-def build_textcnn(vocab_size):
-    model = models.Sequential([
-        layers.Input(shape=(MAX_LEN,)),
-        layers.Embedding(vocab_size, EMBED_DIM),
-        layers.Conv1D(128, 5, activation="relu"),
-        layers.GlobalMaxPooling1D(),
-        layers.Dense(64, activation="relu"),
-        layers.Dropout(0.3),
-        layers.Dense(1, activation="sigmoid"),
-    ])
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-    return model
-
-
-def run_textcnn(tokenizer, X_train, X_val, X_test, train_df, val_df, test_df, epochs=5):
-    vocab_size = min(MAX_VOCAB, len(tokenizer.word_index) + 1)
-    model = build_textcnn(vocab_size)
-    model.fit(X_train, train_df.label.values,
-              validation_data=(X_val, val_df.label.values),
-              epochs=epochs, batch_size=32, verbose=0)
-    preds = (model.predict(X_test, verbose=0) > 0.5).astype(int).ravel()
-    return evaluate("TextCNN", test_df.label.values, preds)
-
-
-# ---------------------------------------------------------------------------
-# 5. Model 3 — BiLSTM on word embeddings  (owner: Jambhorkar Arya Sachin)
-# ---------------------------------------------------------------------------
-
-def build_bilstm(vocab_size):
-    model = models.Sequential([
-        layers.Input(shape=(MAX_LEN,)),
-        layers.Embedding(vocab_size, EMBED_DIM),
-        layers.Bidirectional(layers.LSTM(64, return_sequences=False)),
-        layers.Dense(64, activation="relu"),
-        layers.Dropout(0.3),
-        layers.Dense(1, activation="sigmoid"),
-    ])
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-    return model
-
-
-def run_bilstm(tokenizer, X_train, X_val, X_test, train_df, val_df, test_df, epochs=5):
-    vocab_size = min(MAX_VOCAB, len(tokenizer.word_index) + 1)
-    model = build_bilstm(vocab_size)
-    model.fit(X_train, train_df.label.values,
-              validation_data=(X_val, val_df.label.values),
-              epochs=epochs, batch_size=32, verbose=0)
-    preds = (model.predict(X_test, verbose=0) > 0.5).astype(int).ravel()
-    return evaluate("BiLSTM", test_df.label.values, preds)
-
-
-# ---------------------------------------------------------------------------
-# 6. Shared evaluation
-# ---------------------------------------------------------------------------
-
-def evaluate(name, y_true, y_pred):
-    acc = accuracy_score(y_true, y_pred)
-    prec, rec, f1, _ = precision_recall_fscore_support(y_true, y_pred, average="binary")
-    result = {"model": name, "accuracy": acc, "precision": prec, "recall": rec, "f1": f1}
-    print(f"{name:14s} | acc={acc:.4f}  prec={prec:.4f}  rec={rec:.4f}  f1={f1:.4f}")
+def run_stage(name, argv, outputs, root, signature, resume):
+    import psutil
+    marker = root / f".{name}.complete.json"
+    if resume and marker.exists():
+        old = json.loads(marker.read_text(encoding="utf-8"))
+        if old.get("signature") == signature and old.get("files") == {
+            str(p.relative_to(root)): sha256(p) for p in outputs if p.exists()
+        } and all(p.exists() for p in outputs):
+            print(f"REUSE {name}: verified completed outputs", flush=True)
+            return old
+    marker.unlink(missing_ok=True)
+    log = root / "logs" / f"{name}.log"
+    print(f"START {name}; log: {log}", flush=True)
+    started = time.monotonic()
+    peak_private = peak_rss = low_memory_samples = 0
+    with log.open("w", encoding="utf-8") as stream:
+        child = subprocess.Popen([sys.executable, "-u", *map(str, argv)], stdout=stream, stderr=subprocess.STDOUT)
+        process = psutil.Process(child.pid)
+        while child.poll() is None:
+            private = rss = 0
+            try:
+                for member in [process, *process.children(recursive=True)]:
+                    try:
+                        info = member.memory_info()
+                        private += getattr(info, "private", info.rss)
+                        rss += info.rss
+                    except psutil.NoSuchProcess:
+                        pass
+                peak_private, peak_rss = max(peak_private, private), max(peak_rss, rss)
+                low_memory_samples = low_memory_samples + 1 if psutil.virtual_memory().available < 128 * 2**20 else 0
+                if private > 4 * 2**30 or low_memory_samples >= 3:
+                    for member in process.children(recursive=True):
+                        try:
+                            member.terminate()
+                        except psutil.Error:
+                            pass
+                    child.terminate()
+                    child.wait(timeout=30)
+                    raise RuntimeError(f"{name}: memory guard stopped this stage; close unused applications and rerun --resume. See {log}")
+            except psutil.NoSuchProcess:
+                pass
+            time.sleep(1)
+        code = child.wait()
+    if code:
+        print(log.read_text(encoding="utf-8", errors="replace")[-6000:], flush=True)
+        raise RuntimeError(f"{name} failed with exit code {code}; see {log}")
+    if any(not p.exists() for p in outputs):
+        raise RuntimeError(f"{name} did not produce all expected files")
+    result = {"signature": signature, "seconds": round(time.monotonic()-started, 2),
+              "peak_private_mib": round(peak_private / 2**20, 1), "peak_rss_mib": round(peak_rss / 2**20, 1),
+              "files": {str(p.relative_to(root)): sha256(p) for p in outputs}}
+    marker.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print(f"PASS {name}: {result['seconds']}s; peak private {result['peak_private_mib']} MiB", flush=True)
     return result
 
 
-# ---------------------------------------------------------------------------
-# main
-# ---------------------------------------------------------------------------
-
-def main():
-    print("Loading data...")
-    df = load_real_amazon_polarity() if USE_REAL_DATA else load_synthetic_dev_data()
-    df["text"] = df["text"].apply(clean_text)
-    train_df, val_df, test_df = build_splits(df)
-    print(f"train={len(train_df)} val={len(val_df)} test={len(test_df)}")
-
-    results = []
-
-    print("\nTraining MLP (TF-IDF baseline)...")
-    results.append(run_mlp(train_df, val_df, test_df))
-
-    print("\nTokenizing for CNN/BiLSTM (shared embedding pipeline)...")
-    tok = Tokenizer(num_words=MAX_VOCAB, oov_token="<OOV>")
-    tok.fit_on_texts(train_df.text)
-    X_train = pad_sequences(tok.texts_to_sequences(train_df.text), maxlen=MAX_LEN, padding="post", truncating="post")
-    X_val = pad_sequences(tok.texts_to_sequences(val_df.text), maxlen=MAX_LEN, padding="post", truncating="post")
-    X_test = pad_sequences(tok.texts_to_sequences(test_df.text), maxlen=MAX_LEN, padding="post", truncating="post")
-
-    print("\nTraining TextCNN...")
-    results.append(run_textcnn(tok, X_train, X_val, X_test, train_df, val_df, test_df))
-
-    print("\nTraining BiLSTM...")
-    results.append(run_bilstm(tok, X_train, X_val, X_test, train_df, val_df, test_df))
-
-    print("\n=== Comparison table (preliminary) ===")
-    res_df = pd.DataFrame(results)
-    print(res_df.to_string(index=False))
-    res_df.to_csv("preliminary_results.csv", index=False)
-    return res_df
+def main(argv=None):
+    args = parse_args(argv)
+    root = args.output_dir.resolve()
+    (root / "logs").mkdir(parents=True, exist_ok=True)
+    cache = PROJECT.parent / ".verification-cache/huggingface"
+    if cache.exists():
+        os.environ.setdefault("HF_HOME", str(cache))
+    for key, value in {"PYTHONIOENCODING":"utf-8", "TF_CPP_MIN_LOG_LEVEL":"2",
+                       "TF_NUM_INTRAOP_THREADS":"2", "TF_NUM_INTEROP_THREADS":"1",
+                       "OMP_NUM_THREADS":"2", "HF_HUB_DISABLE_PROGRESS_BARS":"1"}.items():
+        os.environ.setdefault(key, value)
+    config = {"dataset": "fancyzhx/amazon_polarity", "revision": args.revision,
+              "samples": args.samples, "seed": args.seed, "epochs": args.epochs,
+              "patience": args.patience, "batch_size": args.batch_size,
+              "max_vocab": 20000, "max_length": 100, "embedding_dim": 100,
+              "candidates": CANDIDATES, "shard_dir": str(args.shard_dir.resolve()) if args.shard_dir else None,
+              "source_hashes": {p.name: sha256(p) for p in sorted((PROJECT / "src").glob("*.py"))}}
+    signature = hashlib.sha256(json.dumps(config, sort_keys=True).encode()).hexdigest()
+    config["signature"] = signature
+    (root / "run_configuration.json").write_text(json.dumps(config, indent=2), encoding="utf-8")
+    stages = {}
+    prep = [PROJECT / "src/data_utils.py", "--output-dir", root, "--samples", args.samples,
+            "--seed", args.seed, "--revision", args.revision]
+    if args.shard_dir:
+        prep += ["--shard-dir", args.shard_dir.resolve()]
+    prepared = [root / n for n in ("train.csv", "validation.csv", "test.csv", "subset.csv", "data_audit.json", "vectorizer.pkl",
+                                  "train_tfidf.npz", "validation_tfidf.npz", "test_tfidf.npz")]
+    stages["prepare-data"] = run_stage("prepare-data", prep, prepared, root, signature, args.resume)
+    worker = PROJECT / "src/train_worker.py"
+    sequence_outputs = [root / n for n in ("tokenizer.json", "sequence_metadata.json", "train_sequences.npy", "validation_sequences.npy", "test_sequences.npy")]
+    stages["prepare-sequences"] = run_stage("prepare-sequences", [worker, "prepare-sequences", "--output-dir", root], sequence_outputs, root, signature, args.resume)
+    selected = {}
+    for model in MODELS:
+        candidates = []
+        for candidate in CANDIDATES:
+            name = f"train-{model}-{candidate['name']}"
+            folder = root / "models" / model / candidate["name"]
+            outputs = [folder / p for p in ("model.keras", "history.csv", "training_summary.json")]
+            stages[name] = run_stage(name, [worker, "train", "--output-dir", root, "--model", model,
+                                           "--candidate", candidate["name"]], outputs, root, signature, args.resume)
+            candidates.append(json.loads(outputs[-1].read_text(encoding="utf-8")))
+        selected[model] = min(candidates, key=lambda c: c["best_val_loss"])
+    (root / "selected_models.json").write_text(json.dumps(selected, indent=2), encoding="utf-8")
+    # Candidates never open test features or labels. Select using validation only.
+    for model in MODELS:
+        folder = root / "evaluation" / model
+        outputs = [folder / p for p in ("metrics.json", "predictions.csv", "misclassified.csv", "error_categories.csv", "failure_examples.csv", "classification_report.json", "confusion_matrix.csv")]
+        name = f"evaluate-{model}"
+        stages[name] = run_stage(name, [worker, "evaluate", "--output-dir", root, "--model", model,
+                                       "--candidate", selected[model]["candidate"]], outputs, root, signature, args.resume)
+    stages["report"] = run_stage("report", [PROJECT / "src/evaluate.py", "--output-dir", root],
+                             [root / "comparison.csv", root / "RESULTS.md"], root, signature, args.resume)
+    (root / "resource_usage.json").write_text(json.dumps(stages, indent=2), encoding="utf-8")
+    print("\nREAL AMAZON EXPERIMENT COMPLETED\n" + (root / "comparison.csv").read_text(encoding="utf-8"), flush=True)
+    return root
 
 
 if __name__ == "__main__":
