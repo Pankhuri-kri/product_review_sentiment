@@ -1,0 +1,9 @@
+# Preserve exported document bytes on Windows and other platforms.
+*.pdf binary
+*.docx binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ipynb -text
+DL_Project_Complete.ipynb filter=lfs diff=lfs merge=lfs -text

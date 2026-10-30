@@ -4,8 +4,78 @@
 \setmainfont{Times New Roman}
 \setsansfont{Times New Roman}
 \setmonofont{Courier New}
-\usepackage[a4paper,margin=20mm]{geometry}
-\pagestyle{empty}
+\usepackage[a4paper,top=14mm,bottom=14mm,left=12mm,right=12mm]{geometry}
+\usepackage{amsmath,amssymb,graphicx,array,tabularx,booktabs,titlesec,multicol}
+\usepackage[unicode,hidelinks]{hyperref}
+\input{metadata.tex}
+\hypersetup{pdftitle={Product Review Sentiment Classification using Deep Learning},pdfauthor={Pankhuri Kumari; Jambhorkar Arya Sachin; Sai Prasad Prusty}}
+\urlstyle{same}
+\pagestyle{plain}
+
+\setlength{\columnsep}{6mm}
+\setcounter{dbltopnumber}{3}
+\renewcommand{\dbltopfraction}{0.92}
+\renewcommand{\dblfloatpagefraction}{0.80}
+\renewcommand{\textfraction}{0.06}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0pt}
+\setlength{\emergencystretch}{3em}
+\setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\intextsep}{9pt plus 2pt minus 2pt}
+\setlength{\floatsep}{7pt plus 2pt minus 2pt}
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\Alph{subsection}}
+\titleformat{\section}{\normalfont\fontsize{10}{12}\selectfont\centering\scshape}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\fontsize{10}{12}\selectfont\itshape}{\thesubsection.}{0.5em}{}
+\titlespacing*{\section}{0pt}{9pt plus 2pt minus 1pt}{4pt}
+\titlespacing*{\subsection}{0pt}{6pt plus 1pt}{3pt}
+\renewcommand{\thetable}{\Roman{table}}
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\tablename}{Table}
+\makeatletter
+% Give Roman section numbers enough room in the index.
+\renewcommand*{\l@section}{\@dottedtocline{1}{0em}{2.8em}}
+\renewcommand*{\l@subsection}{\@dottedtocline{2}{2.8em}{1.5em}}
+\long\def\@makecaption#1#2{%
+  \begingroup\fontsize{8}{10}\selectfont\centering
+  \def\@tabletype{table}%
+  \ifx\@captype\@tabletype
+    {\scshape #1\par #2\par}\vspace{4pt}%
+  \else
+    \vspace{4pt}#1.\ #2\par
+  \fi
+  \endgroup}
+\makeatother
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \begin{document}
-\noindent Product Review Sentiment Classification using Deep Learning.
+\input{cover.tex}
+\input{index.tex}
+\twocolumn[{
+\begin{center}
+{\fontsize{24}{27}\selectfont\PaperTitle\par}
+\vspace{6pt}
+{\fontsize{11}{13}\selectfont Pankhuri Kumari, Jambhorkar Arya Sachin, and Sai Prasad Prusty\par}
+{\fontsize{10}{12}\selectfont 230911084, 230911088, and 230911298\par}
+\vspace{3pt}
+{\fontsize{10}{12}\selectfont\itshape School of Computer Engineering, Manipal Institute of Technology\par
+Manipal Academy of Higher Education, Manipal, India\par}
+\vspace{4pt}
+{\fontsize{9}{11}\selectfont\ttfamily
+Pankhuri: \PankhuriEmail\par
+Arya: \AryaEmail\par
+Sai: \SaiEmail\par}
+\end{center}
+\vspace{5pt}
+}]
+\fontsize{10}{11}\selectfont
+\phantomsection
+\addcontentsline{toc}{section}{Abstract}
+\input{manuscript.tex}
+\clearpage
+\onecolumn
+\begin{multicols}{2}
+\input{references.tex}
+\end{multicols}
+\input{contributions.tex}
 \end{document}

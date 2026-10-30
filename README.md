@@ -20,7 +20,7 @@ ICT4442 project comparing **MLP, TextCNN, and BiLSTM** on **20,000 real Amazon P
 
 ## Setup and run
 
-Use **Python 3.12**. Run these PowerShell commands from the repository root:
+Use **Python 3.12**. Run these PowerShell commands from this project folder:
 
 ```powershell
 python -m venv .venv
@@ -28,7 +28,7 @@ python -m venv .venv
 & '.\.venv\Scripts\python.exe' src/pipeline.py --resume
 ```
 
-The first run downloads public training shards unless cached; `--shard-dir PATH` accepts existing Amazon training parquet files.
+In the existing DL Project workspace, use `..\.verification-env\Scripts\python.exe` instead of creating another environment. The first run downloads public training shards unless cached; `--shard-dir PATH` accepts existing Amazon training parquet files.
 
 **Safe reruns:** `--resume` verifies signatures and output hashes before reusing completed stages. Changes to source/settings can trigger retraining and replace outputs. Preserve this run by choosing a new folder for experiments:
 
@@ -37,6 +37,10 @@ The first run downloads public training shards unless cached; `--shard-dir PATH`
 ```
 
 ## Jupyter Notebook
+
+The entire project is in [DL_Project_Complete.ipynb](DL_Project_Complete.ipynb), at this repository's root. It contains the real 20,000-review dataset, all model/training/evaluation code, all six trained candidates' inference weights, 14 visualization figures, and 41 original source/test/report attachments. Run all cells with `MODE = "saved"` to restore the included models, recompute test results, and predict new reviews; `MODE = "train"` retrains in memory. It uses no companion project files and creates no separate CSV/model/image files. Required Python packages and setup instructions are inside the notebook.
+
+The original script-based notebook is also retained:
 
 Install and launch Jupyter in the same environment:
 
@@ -62,7 +66,7 @@ Precision, recall, and F1 refer to the positive class. These are single-seed res
 
 Batched parquet reading, float32 sparse TF-IDF, batch-only densification, memory-mapped sequences, and separate worker processes reduce memory use. Training TF-IDF storage is **10.6 MB versus 2.56 GB** previously (about **241× smaller**); peak measured private memory was **686.5 MiB** per stage on CPU.
 
-Run outputs are saved under `results/amazon_20k/`. The repository includes metrics, histories, and reviewed cases; rerun the pipeline to generate the excluded checkpoints, datasets, and full predictions:
+Everything is saved under `results/amazon_20k/`:
 
 | Output | Contents |
 | --- | --- |
@@ -81,11 +85,3 @@ Cue flags are review aids, not verified sarcasm annotations. Qualitative reviews
 ```
 
 Verified: **9 regression tests**, **38 independent real-result checks**, and **all 6 notebook code cells** passed. `.gitignore` excludes environments, datasets, checkpoints, feature arrays, logs, resume markers, and full prediction dumps; source, notebooks, reports, metrics, histories, and reviewed cases remain available to commit.
-
-## Project files and reports
-
-- [Source code](src/) and [regression tests](tests/).
-- [Executed notebook](notebook/DL_Phase2_Sentiment_Pipeline_EXECUTED.ipynb).
-- [Phase 1 synopsis](ICT4442_Synopsis_Phase1.docx).
-- [Phase 2 interim report](report/ICT4442_Team5_Phase2_Interim_Report.docx).
-- [Phase 3 final report](ICT4442_Team5_Phase3_Final_Report_completed.docx).

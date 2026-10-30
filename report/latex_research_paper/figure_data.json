@@ -1,0 +1,290 @@
+{
+  "provenance": "Saved final experiment results/amazon_20k; exported 2026-10-30",
+  "splits": {
+    "train": {
+      "rows": 16000,
+      "label_counts": {
+        "1": 8000,
+        "0": 8000
+      }
+    },
+    "validation": {
+      "rows": 2000,
+      "label_counts": {
+        "1": 1000,
+        "0": 1000
+      }
+    },
+    "test": {
+      "rows": 2000,
+      "label_counts": {
+        "0": 1000,
+        "1": 1000
+      }
+    }
+  },
+  "sequences": {
+    "train": {
+      "shape": [
+        16000,
+        100
+      ],
+      "dtype": "int32",
+      "bytes": 6400000,
+      "truncated_reviews": 4738
+    },
+    "validation": {
+      "shape": [
+        2000,
+        100
+      ],
+      "dtype": "int32",
+      "bytes": 800000,
+      "truncated_reviews": 571
+    },
+    "test": {
+      "shape": [
+        2000,
+        100
+      ],
+      "dtype": "int32",
+      "bytes": 800000,
+      "truncated_reviews": 593
+    }
+  },
+  "metrics": [
+    {
+      "model": "MLP (TF-IDF)",
+      "accuracy": 0.882,
+      "precision": 0.8759842519685039,
+      "recall": 0.89,
+      "f1": 0.8829365079365079
+    },
+    {
+      "model": "TextCNN",
+      "accuracy": 0.854,
+      "precision": 0.8371428571428572,
+      "recall": 0.879,
+      "f1": 0.8575609756097561
+    },
+    {
+      "model": "BiLSTM",
+      "accuracy": 0.861,
+      "precision": 0.8588469184890656,
+      "recall": 0.864,
+      "f1": 0.8614157527417746
+    }
+  ],
+  "confusions": [
+    [
+      [
+        874,
+        126
+      ],
+      [
+        110,
+        890
+      ]
+    ],
+    [
+      [
+        829,
+        171
+      ],
+      [
+        121,
+        879
+      ]
+    ],
+    [
+      [
+        858,
+        142
+      ],
+      [
+        136,
+        864
+      ]
+    ]
+  ],
+  "histories": [
+    [
+      {
+        "epoch": "1",
+        "accuracy": "0.8342499732971191",
+        "loss": "0.3988366723060608",
+        "val_accuracy": "0.890999972820282",
+        "val_loss": "0.2627315819263458"
+      },
+      {
+        "epoch": "2",
+        "accuracy": "0.9511250257492065",
+        "loss": "0.1439065784215927",
+        "val_accuracy": "0.8895000219345093",
+        "val_loss": "0.2869635224342346"
+      },
+      {
+        "epoch": "3",
+        "accuracy": "0.9840624928474426",
+        "loss": "0.05932607874274254",
+        "val_accuracy": "0.8824999928474426",
+        "val_loss": "0.3644484579563141"
+      }
+    ],
+    [
+      {
+        "epoch": "1",
+        "accuracy": "0.7829375267028809",
+        "loss": "0.441716730594635",
+        "val_accuracy": "0.8665000200271606",
+        "val_loss": "0.31330326199531555"
+      },
+      {
+        "epoch": "2",
+        "accuracy": "0.9305624961853027",
+        "loss": "0.18892985582351685",
+        "val_accuracy": "0.875",
+        "val_loss": "0.29687920212745667"
+      },
+      {
+        "epoch": "3",
+        "accuracy": "0.9853125214576721",
+        "loss": "0.05211414396762848",
+        "val_accuracy": "0.871999979019165",
+        "val_loss": "0.3658455014228821"
+      },
+      {
+        "epoch": "4",
+        "accuracy": "0.9980000257492065",
+        "loss": "0.010146272368729115",
+        "val_accuracy": "0.8740000128746033",
+        "val_loss": "0.4386318325996399"
+      }
+    ],
+    [
+      {
+        "epoch": "1",
+        "accuracy": "0.8385000228881836",
+        "loss": "0.3649516701698303",
+        "val_accuracy": "0.8809999823570251",
+        "val_loss": "0.2801750600337982"
+      },
+      {
+        "epoch": "2",
+        "accuracy": "0.9415000081062317",
+        "loss": "0.16486017405986786",
+        "val_accuracy": "0.8694999814033508",
+        "val_loss": "0.32173383235931396"
+      },
+      {
+        "epoch": "3",
+        "accuracy": "0.9731875061988831",
+        "loss": "0.07671328634023666",
+        "val_accuracy": "0.8675000071525574",
+        "val_loss": "0.4529303014278412"
+      }
+    ]
+  ],
+  "selected": [
+    {
+      "model": "mlp",
+      "candidate": "regularized",
+      "settings": {
+        "name": "regularized",
+        "dropout": 0.5,
+        "learning_rate": 0.0005,
+        "weight_decay": 0.0001
+      },
+      "trained_epochs": 3,
+      "best_epoch": 1,
+      "best_val_loss": 0.2627315819263458,
+      "best_val_accuracy": 0.890999972820282,
+      "best_train_accuracy": 0.8342499732971191,
+      "seconds": 80.78,
+      "parameter_count": 5136769,
+      "test_used_for_selection": false,
+      "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+      "versions": {
+        "tensorflow": "2.21.0",
+        "keras": "3.15.1",
+        "numpy": "2.5.4",
+        "scikit-learn": "1.9.1"
+      },
+      "devices": [
+        "PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU')"
+      ]
+    },
+    {
+      "model": "textcnn",
+      "candidate": "standard",
+      "settings": {
+        "name": "standard",
+        "dropout": 0.3,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001
+      },
+      "trained_epochs": 4,
+      "best_epoch": 2,
+      "best_val_loss": 0.29687920212745667,
+      "best_val_accuracy": 0.875,
+      "best_train_accuracy": 0.9305624961853027,
+      "seconds": 64.83,
+      "parameter_count": 2072449,
+      "test_used_for_selection": false,
+      "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+      "versions": {
+        "tensorflow": "2.21.0",
+        "keras": "3.15.1",
+        "numpy": "2.5.4",
+        "scikit-learn": "1.9.1"
+      },
+      "devices": [
+        "PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU')"
+      ]
+    },
+    {
+      "model": "bilstm",
+      "candidate": "standard",
+      "settings": {
+        "name": "standard",
+        "dropout": 0.3,
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001
+      },
+      "trained_epochs": 3,
+      "best_epoch": 1,
+      "best_val_loss": 0.2801750600337982,
+      "best_val_accuracy": 0.8809999823570251,
+      "best_train_accuracy": 0.8385000228881836,
+      "seconds": 190.31,
+      "parameter_count": 2092801,
+      "test_used_for_selection": false,
+      "signature": "c91b878a9d91b8de64194a99164a390e10c6c00654304341a4ec95e909c1bf2d",
+      "versions": {
+        "tensorflow": "2.21.0",
+        "keras": "3.15.1",
+        "numpy": "2.5.4",
+        "scikit-learn": "1.9.1"
+      },
+      "devices": [
+        "PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU')"
+      ]
+    }
+  ],
+  "selected_stage_seconds": [
+    90.56,
+    75.94,
+    199.02
+  ],
+  "csr_bytes": 10634684,
+  "dense64_bytes": 2560000000,
+  "error_regions": [
+    58,
+    100,
+    79,
+    34,
+    41,
+    55,
+    103
+  ]
+}
